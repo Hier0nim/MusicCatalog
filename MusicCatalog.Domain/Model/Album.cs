@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MusicCatalog.Domain.Model
 {
-    internal class Album
+    public class Album
     {
         private int Id { get; set; }
         private string Title { get; set; }

@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace MusicCatalog.Domain.Model
 {
-    internal class Track
+    public class Track
     {
         private int Id { get; set; }
         private string Title { get; set; }
         private string Artist { get; set; }
         public virtual Album Album { get; set; }
+
+        private ICollection<TrackTag> TrackTags { get; set; }
     }
 }
