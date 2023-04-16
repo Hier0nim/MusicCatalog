@@ -8,9 +8,9 @@ namespace MusicCatalog.Domain.Model
 {
     public class Album
     {
-        private int Id { get; set; }
-        private string Title { get; set; }
-        private  string Artist{ get; set; }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Artist{ get; set; }
 
         public virtual ICollection<Track> Tracks{ get;}
     }

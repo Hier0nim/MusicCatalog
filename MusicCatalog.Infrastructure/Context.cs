@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MusicCatalog.Domain.Model;
 
-namespace MusicCatalog.Infrastructure.Repositories
+namespace MusicCatalog.Infrastructure
 {
     public class Context : IdentityDbContext
     {
@@ -23,6 +23,24 @@ namespace MusicCatalog.Infrastructure.Repositories
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<Album>()
+                .HasMany(i => i.Tracks)
+                .WithOne(i => i.Album);
+
+            builder.Entity<TrackTag>()
+                .HasKey(it => new { it.TrackId, it.TagId });
+
+            builder.Entity<TrackTag>()
+                .HasOne(it => it.Track)
+                .WithMany(i => i.TrackTags)
+                .HasForeignKey(it => it.TrackId);
+
+            builder.Entity<TrackTag>()
+                .HasOne(it => it.Tag)
+                .WithMany(i => i.TrackTags)
+                .HasForeignKey(it => it.TagId);
+
         }
     }
 }

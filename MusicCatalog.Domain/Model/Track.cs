@@ -8,11 +8,11 @@ namespace MusicCatalog.Domain.Model
 {
     public class Track
     {
-        private int Id { get; set; }
-        private string Title { get; set; }
-        private string Artist { get; set; }
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Artist { get; set; }
         public virtual Album Album { get; set; }
 
-        private ICollection<TrackTag> TrackTags { get; set; }
+        public ICollection<TrackTag> TrackTags { get; set; }
     }
 }
