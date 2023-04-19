@@ -12,5 +12,6 @@ namespace MusicCatalog.Domain.Model
         public string Name { get; set; }
 
         public ICollection<TrackTag> TrackTags { get; set; }
+        public ICollection<AlbumTag> AlbumTags { get; set; }
     }
 }
