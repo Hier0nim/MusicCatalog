@@ -1,4 +1,6 @@
-﻿using MusicCatalog.Application.Interfaces;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using MusicCatalog.Application.Interfaces;
 using MusicCatalog.Application.ViewModels.Track;
 using MusicCatalog.Domain.Interfaces;
 using MusicCatalog.Domain.Model;
@@ -14,6 +16,13 @@ namespace MusicCatalog.Application.Services
     internal class TrackService : ITrackService
     {
         private readonly ITrackRepository _trackRepo;
+        private readonly IMapper _mapper;
+
+        public TrackService(ITrackRepository trackRepo, IMapper mapper)
+        {
+            _trackRepo = trackRepo;
+            _mapper = mapper; 
+        }
 
         public int AddTrack(NewTrackVm track)
         {
@@ -22,35 +31,25 @@ namespace MusicCatalog.Application.Services
 
         public ListTrackForListVm GetAllTracksForList()
         {
-            var tracks =  _trackRepo.GetAllTracks();
-            ListTrackForListVm result = new()
+            var tracks =  _trackRepo.GetAllTracks()
+                .ProjectTo<TrackForListVm>(_mapper.ConfigurationProvider)
+                .ToList();
+            var trackList = new ListTrackForListVm()
             {
-                Tracks = new List<TrackForListVm>()
+                Tracks = tracks,
+                Count = tracks.Count
             };
-            foreach (var track in tracks)
-            {
-                var trackVm = new TrackForListVm()
-                {
-                    Id = track.Id,
-                    Title = track.Title
-                };
-                result.Tracks.Add(trackVm);
-                  
-            }
-            result.Count = result.Tracks.Count;
-            return result;
+
+            return trackList;
         }
 
         public TrackDetailsVm GetTrackDetails(int trackId)
         {
             var track = _trackRepo.GetTrackById(trackId);
-            var trackVm = new TrackDetailsVm
-            {
-                Id = trackId,
-                Length = trackId,
-                Artist = new List<ArtistForListVm>()
-            };
+            var trackVm = _mapper.Map<TrackDetailsVm>(track);
 
+            trackVm.Artists = new List<ArtistForListVm>;
+         
             foreach (var artist in track.TrackArtists)
             {
                 var add = new ArtistForListVm()
@@ -58,9 +57,9 @@ namespace MusicCatalog.Application.Services
                     Id = artist.Artist.Id,
                     Name = artist.Artist.Name
                 };
-                trackVm.Artist.Add(add);
+                trackVm.Artists.Add(add);
 
-            }
+            } 
             return trackVm;
         }
     }

@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
+using MusicCatalog.Application;
+using MusicCatalog.Domain.Interfaces;
 using MusicCatalog.Infrastructure;
+using MusicCatalog.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +16,11 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<Context>();
-builder.Services.AddControllersWithViews();
 
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
+
+builder.Services.AddControllersWithViews(); 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

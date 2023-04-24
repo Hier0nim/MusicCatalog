@@ -12,11 +12,12 @@ namespace MusicCatalog.Application.ViewModels.Track
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public string Artist{ get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<MusicCatalog.Domain.Model.Track, TrackForListVm>();
+            profile.CreateMap<MusicCatalog.Domain.Model.Track, TrackForListVm>()
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                .ForMember(d => d.Title, opt => opt.MapFrom(s => s.Title));
         }
 
     }
