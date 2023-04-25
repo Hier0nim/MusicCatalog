@@ -48,7 +48,7 @@ namespace MusicCatalog.Application.Services
             var track = _trackRepo.GetTrackById(trackId);
             var trackVm = _mapper.Map<TrackDetailsVm>(track);
 
-            trackVm.Artists = new List<ArtistForListVm>;
+            trackVm.Artists = new List<ArtistForListVm>();
          
             foreach (var artist in track.TrackArtists)
             {

@@ -41,6 +41,45 @@ namespace MusicCatalog.Infrastructure
                 .WithMany(i => i.TrackTags)
                 .HasForeignKey(it => it.TagId);
 
+            builder.Entity<AlbumTag>()
+               .HasKey(it => new { it.AlbumId, it.TagId });
+
+            builder.Entity<AlbumTag>()
+                .HasOne(it => it.Album)
+                .WithMany(i => i.AlbumTags)
+                .HasForeignKey(it => it.AlbumId);
+
+            builder.Entity<AlbumTag>()
+                .HasOne(it => it.Tag)
+                .WithMany(i => i.AlbumTags)
+                .HasForeignKey(it => it.TagId);
+
+            builder.Entity<TrackArtist>()
+                .HasKey(it => new { it.TrackId, it.ArtistId });
+
+            builder.Entity<TrackArtist>()
+                .HasOne(it => it.Artist)
+                .WithMany(i => i.TrackArtists)
+                .HasForeignKey(it => it.ArtistId);
+
+            builder.Entity<TrackArtist>()
+                .HasOne(it => it.Track)
+                .WithMany(i => i.TrackArtists)
+                .HasForeignKey(it => it.TrackId);
+
+            builder.Entity<AlbumArtist>()
+                .HasKey(it => new { it.AlbumId, it.ArtistId });
+
+            builder.Entity<AlbumArtist>()
+                .HasOne(it => it.Artist)
+                .WithMany(i => i.AlbumArtists)
+                .HasForeignKey(it => it.ArtistId);
+
+            builder.Entity<AlbumArtist>()
+                .HasOne(it => it.Album)
+                .WithMany(i => i.AlbumArtists)
+                .HasForeignKey(it => it.AlbumId);
+
         }
     }
 }

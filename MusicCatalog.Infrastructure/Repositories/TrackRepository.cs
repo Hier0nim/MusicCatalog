@@ -45,6 +45,12 @@ namespace MusicCatalog.Infrastructure.Repositories
             return track;
         }
 
+        public IQueryable<Track> GetAllTracks()
+        {
+            var tracks = _context.Tracks;
+            return tracks;
+        }
+
         public IQueryable<Tag> GetAllTags()
         {
             var tags = _context.Tags;
