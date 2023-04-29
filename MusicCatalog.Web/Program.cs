@@ -1,12 +1,16 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using MusicCatalog.Application;
+using MusicCatalog.Application.ViewModels.Track;
 using MusicCatalog.Domain.Interfaces;
 using MusicCatalog.Infrastructure;
 using MusicCatalog.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.AddFile("Logs/myLog-{Date}.txt");
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -20,12 +24,17 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 
-builder.Services.AddControllersWithViews(); 
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+
+builder.Services.AddTransient<IValidator<NewTrackVm>, NewTrackValidation>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-{
+{  
     app.UseMigrationsEndPoint();
 }
 else

@@ -15,6 +15,7 @@ namespace MusicCatalog.Web.Controllers
 
         public IActionResult Index()
         {
+            _logger.LogInformation("In Home/Index");
             return View();
         }
 

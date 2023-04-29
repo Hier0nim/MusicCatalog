@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace MusicCatalog.Application.Services
 {
-    internal class TrackService : ITrackService
+    public class TrackService : ITrackService
     {
         private readonly ITrackRepository _trackRepo;
         private readonly IMapper _mapper;
@@ -26,41 +26,46 @@ namespace MusicCatalog.Application.Services
 
         public int AddTrack(NewTrackVm track)
         {
-            throw new NotImplementedException();
+            var tr = _mapper.Map<Track>(track);
+            var id = _trackRepo.AddTrack(tr);
+            return id;
         }
 
-        public ListTrackForListVm GetAllTracksForList()
+        public void DeleteTrack(int id)
         {
-            var tracks =  _trackRepo.GetAllTracks()
+            _trackRepo.DeleteTrack(id);
+        }
+
+        public ListTrackForListVm GetAllTracksForList(int pageSize, int PageNumber, string searchString)
+        {
+            var tracks =  _trackRepo.GetAllTracks().Where(p => p.Title.StartsWith(searchString))
                 .ProjectTo<TrackForListVm>(_mapper.ConfigurationProvider)
                 .ToList();
+            var tracksToShow = tracks.Skip(pageSize * (PageNumber - 1)).Take(pageSize).ToList();
             var trackList = new ListTrackForListVm()
             {
-                Tracks = tracks,
+                PageSize = pageSize,
+                CurrentPage = PageNumber,
+                SearchString = searchString,
+                Tracks = tracksToShow,
                 Count = tracks.Count
             };
 
             return trackList;
         }
 
-        public TrackDetailsVm GetTrackDetails(int trackId)
+        public object GetTrackForEdit(int id)
         {
-            var track = _trackRepo.GetTrackById(trackId);
-            var trackVm = _mapper.Map<TrackDetailsVm>(track);
-
-            trackVm.Artists = new List<ArtistForListVm>();
-         
-            foreach (var artist in track.TrackArtists)
-            {
-                var add = new ArtistForListVm()
-                {
-                    Id = artist.Artist.Id,
-                    Name = artist.Artist.Name
-                };
-                trackVm.Artists.Add(add);
-
-            } 
+            var track = _trackRepo.GetTrackById(id);
+            var trackVm = _mapper.Map<NewTrackVm>(track);
             return trackVm;
+        }
+
+        public object UpdateTrack(NewTrackVm model)
+        {
+            var track = _mapper.Map<Track>(model);
+            _trackRepo.UpdateTrack(track);
+            return model;
         }
     }
 }

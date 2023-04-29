@@ -17,9 +17,8 @@ namespace MusicCatalog.Domain.Interfaces
 
         IQueryable<Track> GetAllTracks();
 
-        Track GetTrackById(int TrackId);
+        Track GetTrackById(int trackId);
 
-        IQueryable<Tag> GetAllTags();
-
+        void UpdateTrack(Track track);
     }
 }

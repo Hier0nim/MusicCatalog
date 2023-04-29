@@ -9,8 +9,10 @@ namespace MusicCatalog.Application.Interfaces
 {
     public interface ITrackService
     {
-        ListTrackForListVm GetAllTracksForList();
+        ListTrackForListVm GetAllTracksForList(int pageSize, int PageNumber, string searchString);
         int AddTrack(NewTrackVm track);
-        TrackDetailsVm GetTrackDetails(int trackId);
+        object GetTrackForEdit(int id);
+        object UpdateTrack(NewTrackVm model);
+        void DeleteTrack(int id);
     }
 }

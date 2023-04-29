@@ -16,6 +16,13 @@ namespace MusicCatalog.Infrastructure.Repositories
             _context = context;
         }
 
+        public int AddTrack(Track track)
+        {
+            _context.Tracks.Add(track);
+            _context.SaveChanges();
+            return track.Id;
+        }
+
         public void DeleteTrack(int trackId)
         {
             var track = _context.Tracks.Find(trackId);
@@ -25,12 +32,10 @@ namespace MusicCatalog.Infrastructure.Repositories
                 _context.SaveChanges(); 
             }
         }
-
-        public int AddTrack(Track track)
+        public Track GetTrackById(int trackId)
         {
-            _context.Tracks.Add(track);
-            _context.SaveChanges();
-            return track.Id;
+            var track = _context.Tracks.FirstOrDefault(i => i.Id == trackId);
+            return track;
         }
 
         public IQueryable<Track> GetTracksByAlbumId(int albumId)
@@ -39,23 +44,18 @@ namespace MusicCatalog.Infrastructure.Repositories
             return tracks;
         }
 
-        public Track GetTrackById(int TrackId) 
-        {
-            var track = _context.Tracks.FirstOrDefault(i => i.Id == TrackId);
-            return track;
-        }
-
         public IQueryable<Track> GetAllTracks()
         {
             var tracks = _context.Tracks;
             return tracks;
         }
 
-        public IQueryable<Tag> GetAllTags()
+        public void UpdateTrack(Track track)
         {
-            var tags = _context.Tags;
-            return tags;
+            _context.Attach(track);
+            _context.Entry(track).Property("Title").IsModified = true;
+            _context.Entry(track).Property("Length").IsModified = true;
+            _context.SaveChanges();
         }
-
     }
 }
