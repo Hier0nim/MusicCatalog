@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MusicCatalog.Application.ViewModels.Album
 {
-    internal class AlbumForListVm : IMapFrom<MusicCatalog.Domain.Model.Album>
+    public class AlbumForListVm : IMapFrom<MusicCatalog.Domain.Model.Album>
     {
         public int Id { get; set; }
         public string Title { get; set; }

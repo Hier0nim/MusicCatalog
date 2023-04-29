@@ -1,0 +1,92 @@
+﻿@model MusicCatalog.Application.ViewModels.Album.ListAlbumForListVm
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="AddAlbum">Add New Album</a>
+</p>
+<form asp-action="Index" asp-controller="Album" method="post">
+    <div class="row">
+        <input type="text" asp-for="SearchString" name="searchString" id="searchString" />
+        <input type="submit" value="search" />
+    </div>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                       Id
+                    </th>
+                    <th>
+                        Title
+                    </th>
+                    <th>
+                        Year of publication
+                    </th>
+                    <th>
+                        Version
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Albums) {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PublicationYear)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Version)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "EditAlbum", new { id=item.Id }) |
+                            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+                            @Html.ActionLink("Delete", "DeleteAlbum", new { id=item.Id })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <table>
+            <tr>
+                @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+                {
+                    <td>
+                        @if (i != Model.CurrentPage)
+                        {
+                            <a href="javascript:PagerClick(@i)">@i</a>
+                        }
+                        else
+                        {
+                            <span>@i</span>
+                        }
+                    </td>
+                }
+            </tr>
+        </table>
+        <input type="hidden" name="pageNumber" id="pageNumber" />
+        <input type="hidden" name="pageSize" id="pageSize" value="2" />
+    </div>
+</form>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        function PagerClick(index) {
+            document.getElementById("pageNumber").value = index;
+            document.forms[0].submit();
+        }
+    </script>
+}

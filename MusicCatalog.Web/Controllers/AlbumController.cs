@@ -1,23 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MusicCatalog.Application.Interfaces;
-using MusicCatalog.Application.ViewModels.Track;
-using MusicCatalog.Domain.Model;
+using MusicCatalog.Application.Services;
+using MusicCatalog.Application.ViewModels.Album;
 
 namespace MusicCatalog.Web.Controllers
 {
-    public class TrackController : Controller
+    public class AlbumController : Controller
     {
-        private readonly ITrackService _trackService;
 
-        public TrackController(ITrackService trackService)
+        private readonly IAlbumService _albumService;
+
+        public AlbumController(IAlbumService albumService)
         {
-            _trackService = trackService;
+            _albumService = albumService;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
-            var model = _trackService.GetAllTracksForList(2, 1, "");
+            var model = _albumService.GetAllAlbumsForList(2, 1, "");
             return View(model);
         }
 
@@ -32,42 +33,42 @@ namespace MusicCatalog.Web.Controllers
             {
                 searchString = String.Empty;
             }
-            var model = _trackService.GetAllTracksForList(pageSize, pageNumber.Value, searchString);
+            var model = _albumService.GetAllAlbumsForList(pageSize, pageNumber.Value, searchString);
             return View(model);
         }
 
         [HttpGet]
-        public IActionResult EditTrack(int id)
+        public IActionResult EditAlbum(int id)
         {
-            var track = _trackService.GetTrackForEdit(id);
-            return View(track);
+            var album = _albumService.GetAlbumForEdit(id);
+            return View(album);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditTrack(NewTrackVm model)
+        public IActionResult EditAlbum(NewAlbumVm model)
         {
             if (ModelState.IsValid)
             {
-                _trackService.UpdateTrack(model);
+                _albumService.UpdateAlbum(model);
                 return RedirectToAction("Index");
             }
             return View(model);
         }
 
         [HttpGet]
-        public IActionResult AddTrack()
+        public IActionResult AddAlbum()
         {
-            return View(new NewTrackVm());
+            return View(new NewAlbumVm());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddTrack(NewTrackVm model)
+        public IActionResult AddAlbum(NewAlbumVm model)
         {
             if (ModelState.IsValid)
             {
-                var id = _trackService.AddTrack(model);
+                var id = _albumService.AddAlbum(model);
                 return RedirectToAction("Index");
             }
             return View(model);
@@ -75,10 +76,8 @@ namespace MusicCatalog.Web.Controllers
 
         public IActionResult Delete(int id)
         {
-            _trackService.DeleteTrack(id);
+            _albumService.DeleteAlbum(id);
             return RedirectToAction("Index");
         }
-
     }
-
 }

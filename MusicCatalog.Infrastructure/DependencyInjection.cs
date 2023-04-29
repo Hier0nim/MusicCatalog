@@ -14,6 +14,7 @@ namespace MusicCatalog.Infrastructure
         public static IServiceCollection AddInfrastructure (this IServiceCollection services)
         {
             services.AddTransient<ITrackRepository, TrackRepository>();
+            services.AddTransient<IAlbumRepository, AlbumRepository>();
             return services;
         }
     }

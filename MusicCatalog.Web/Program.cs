@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using MusicCatalog.Application;
+using MusicCatalog.Application.ViewModels.Album;
 using MusicCatalog.Application.ViewModels.Track;
 using MusicCatalog.Domain.Interfaces;
 using MusicCatalog.Infrastructure;
@@ -30,6 +31,8 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
 builder.Services.AddTransient<IValidator<NewTrackVm>, NewTrackValidation>();
+builder.Services.AddTransient<IValidator<NewAlbumVm>, NewAlbumValidation>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

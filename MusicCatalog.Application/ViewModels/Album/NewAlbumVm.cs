@@ -28,7 +28,7 @@ namespace MusicCatalog.Application.ViewModels.Album
     {
         public NewAlbumValidation()
         {
-            RuleFor(x => x.Id).NotEmpty();
+            //RuleFor(x => x.Id).NotEmpty();
             RuleFor(x => x.Title).NotEmpty().MaximumLength(255);
             RuleFor(x => x.Artist).NotEmpty().MaximumLength(255);
             RuleFor(x => x.PublicationYear).NotEmpty().LessThan(9999);

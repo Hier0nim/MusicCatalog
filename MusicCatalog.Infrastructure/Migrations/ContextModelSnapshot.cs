@@ -236,30 +236,20 @@ namespace MusicCatalog.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PublicationYear")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Version")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Albums");
-                });
-
-            modelBuilder.Entity("MusicCatalog.Domain.Model.Tag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("MusicCatalog.Domain.Model.Track", b =>
@@ -273,9 +263,8 @@ namespace MusicCatalog.Infrastructure.Migrations
                     b.Property<int>("AlbumId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Artist")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Length")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -286,21 +275,6 @@ namespace MusicCatalog.Infrastructure.Migrations
                     b.HasIndex("AlbumId");
 
                     b.ToTable("Tracks");
-                });
-
-            modelBuilder.Entity("MusicCatalog.Domain.Model.TrackTag", b =>
-                {
-                    b.Property<int>("TrackId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TrackId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("TrackTag");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -365,38 +339,9 @@ namespace MusicCatalog.Infrastructure.Migrations
                     b.Navigation("Album");
                 });
 
-            modelBuilder.Entity("MusicCatalog.Domain.Model.TrackTag", b =>
-                {
-                    b.HasOne("MusicCatalog.Domain.Model.Tag", "Tag")
-                        .WithMany("TrackTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MusicCatalog.Domain.Model.Track", "Track")
-                        .WithMany("TrackTags")
-                        .HasForeignKey("TrackId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tag");
-
-                    b.Navigation("Track");
-                });
-
             modelBuilder.Entity("MusicCatalog.Domain.Model.Album", b =>
                 {
                     b.Navigation("Tracks");
-                });
-
-            modelBuilder.Entity("MusicCatalog.Domain.Model.Tag", b =>
-                {
-                    b.Navigation("TrackTags");
-                });
-
-            modelBuilder.Entity("MusicCatalog.Domain.Model.Track", b =>
-                {
-                    b.Navigation("TrackTags");
                 });
 #pragma warning restore 612, 618
         }
