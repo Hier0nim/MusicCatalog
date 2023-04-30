@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using MusicCatalog.Application.Interfaces;
-using MusicCatalog.Application.Services;
 using MusicCatalog.Application.ViewModels.Album;
+using System.Security.Claims;
 
 namespace MusicCatalog.Web.Controllers
 {
+
+    [Authorize(Roles = "Admin, User")]
     public class AlbumController : Controller
     {
 
@@ -16,24 +20,28 @@ namespace MusicCatalog.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder)
         {
-            var model = _albumService.GetAllAlbumsForList(2, 1, "");
+            ViewBag.TitleSortParm = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewBag.YearSortParm = sortOrder == "date" ? "date_desc" : "date";
+            ViewBag.ArtistSortParm = sortOrder == "artist" ? "artist_desc" : "artist";
+            TempData["albumSortOrder"] = sortOrder;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var model = _albumService.GetAlbumsFromUserForList(2, 1, "", "", 0, userId, sortOrder);
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult Index(int pageSize, int? pageNumber, string searchString)
+        public IActionResult Index(int pageSize, int? pageNumber, string titleSearchString, string artistSearchString, int yearSearchNumber)
         {
             if (!pageNumber.HasValue)
             {
                 pageNumber = 1;
             }
-            if (searchString is null)
-            {
-                searchString = String.Empty;
-            }
-            var model = _albumService.GetAllAlbumsForList(pageSize, pageNumber.Value, searchString);
+            titleSearchString ??= String.Empty;
+            string sortOrder = TempData.ContainsKey("albumSortOrder") ? (string)TempData.Peek("albumSortOrder") : "";
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var model = _albumService.GetAlbumsFromUserForList(pageSize, pageNumber.Value, titleSearchString, artistSearchString, yearSearchNumber, userId, sortOrder);
             return View(model);
         }
 
@@ -68,7 +76,8 @@ namespace MusicCatalog.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var id = _albumService.AddAlbum(model);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                _albumService.AddAlbum(model, userId);
                 return RedirectToAction("Index");
             }
             return View(model);
@@ -78,6 +87,14 @@ namespace MusicCatalog.Web.Controllers
         {
             _albumService.DeleteAlbum(id);
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Details(int id, string albumTitle, string artist)
+        {
+            TempData["selectedAlbum"] = id;
+            TempData["AlbumTitle"] = albumTitle;
+            TempData["Artist"] = artist;
+            return RedirectToAction("Index", "Track");
         }
     }
 }

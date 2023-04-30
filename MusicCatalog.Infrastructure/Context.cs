@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MusicCatalog.Domain.Model;
 
 namespace MusicCatalog.Infrastructure
@@ -22,10 +17,10 @@ namespace MusicCatalog.Infrastructure
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Album>()
-                .HasMany(i => i.Tracks)
-                .WithOne(i => i.Album);
-
+            builder.Entity<Track>()
+                .HasOne(i => i.Album)
+                .WithMany(i => i.Tracks)
+                .HasForeignKey( i => i.AlbumId);
         }
     }
 }

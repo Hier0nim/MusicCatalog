@@ -1,18 +1,13 @@
 ﻿using MusicCatalog.Domain.Interfaces;
 using MusicCatalog.Domain.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicCatalog.Infrastructure.Repositories
 {
     public class TrackRepository : ITrackRepository
     {
         private readonly Context _context;
-        public TrackRepository(Context context) 
-        { 
+        public TrackRepository(Context context)
+        {
             _context = context;
         }
 
@@ -29,7 +24,7 @@ namespace MusicCatalog.Infrastructure.Repositories
             if (track != null)
             {
                 _context.Tracks.Remove(track);
-                _context.SaveChanges(); 
+                _context.SaveChanges();
             }
         }
         public Track GetTrackById(int trackId)

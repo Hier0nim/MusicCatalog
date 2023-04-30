@@ -1,7 +1,7 @@
 ﻿@model MusicCatalog.Application.ViewModels.Track.NewTrackVm
 
 @{
-    ViewData["Title"] = "EditTrack";
+    ViewData["Title"] = "Edit Track";
 }
 
 <h1>EditTrack</h1>
@@ -17,6 +17,11 @@
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Length" class="control-label"></label>
+                <input asp-for="Length" class="form-control" />
+                <span asp-validation-for="Length" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

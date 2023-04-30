@@ -1,34 +1,44 @@
 ﻿@model MusicCatalog.Application.ViewModels.Album.ListAlbumForListVm
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Albums Page";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="AddAlbum">Add New Album</a>
-</p>
+<h1>Your Albums</h1>
+<div class="row">
+    <input type="button" class="btn btn-primary add-button" value="Create New Album" onclick="location.href='@Url.Action("AddAlbum", "Album")'"/>
+</div>
 <form asp-action="Index" asp-controller="Album" method="post">
-    <div class="row">
-        <input type="text" asp-for="SearchString" name="searchString" id="searchString" />
-        <input type="submit" value="search" />
+     <div class="row">
+        <div class="col-sm-4">
+            <input type="text" asp-for="TitleSearchString" name="titleSearchString" id="titleSearchString" />
+        </div>
+        <div class="col-sm-4">
+            <input type="text" asp-for="ArtistSearchString" name="artistSearchString" id="artistSearchString" />        
+        </div>
+        <div class="col-sm-4">
+            <input type="number" asp-for="YearSearchNumber" name="yearSearchNumber" id="yearSearchNumber" />
+            <input type="submit" value="search" />
+        </div>
     </div>
     <div class="row">
         <table class="table">
             <thead>
                 <tr>
                     <th>
-                       Id
+                        @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TitleSortParm })
                     </th>
                     <th>
-                        Title
+                        @Html.ActionLink("Artist", "Index", new { sortOrder = ViewBag.ArtistSortParm })
                     </th>
                     <th>
-                        Year of publication
+                        @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParm })
                     </th>
                     <th>
                         Version
+                    </th>
+                    <th>
+                        Provider
                     </th>
                     <th></th>
                 </tr>
@@ -37,10 +47,10 @@
                 @foreach (var item in Model.Albums) {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Id)
+                            @Html.DisplayFor(modelItem => item.Title)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Title)
+                            @Html.DisplayFor(modelItem => item.Artist)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.PublicationYear)
@@ -49,9 +59,12 @@
                             @Html.DisplayFor(modelItem => item.Version)
                         </td>
                         <td>
+                            @User.Identity.Name
+                        </td>
+                        <td>
                             @Html.ActionLink("Edit", "EditAlbum", new { id=item.Id }) |
-                            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                            @Html.ActionLink("Delete", "DeleteAlbum", new { id=item.Id })
+                            @Html.ActionLink("Details", "Details", new { id=item.Id, albumTitle = item.Title, artist = item.Artist}) |
+                            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
                         </td>
                     </tr>
                 }
@@ -82,11 +95,30 @@
 </form>
 
 @section Scripts
-    {
+{
     <script type="text/javascript">
-        function PagerClick(index) {
+        function PagerClick(index) 
+        {
             document.getElementById("pageNumber").value = index;
-            document.forms[0].submit();
+            document.forms[1].submit();
         }
     </script>
+}
+
+@section Styles
+    {
+    <style type="text/css">
+        .add-button{
+            background-color: #4CAF50;
+            border-radius: 2px;
+            width: 36;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            padding: 24px 36px;
+        }
+    </style>
 }

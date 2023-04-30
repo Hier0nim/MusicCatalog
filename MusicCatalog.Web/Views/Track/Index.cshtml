@@ -1,13 +1,12 @@
 ﻿@model MusicCatalog.Application.ViewModels.Track.ListTrackForListVm
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Tracks Page";
 }
 
-<h1>Index</h1>
-
+<h1>@TempData.Peek("AlbumTitle") - @TempData.Peek("artist")</h1>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="AddTrack">Create New</a>
 </p>
 <form asp-action="Index" asp-controller="Track" method="post">
     <div class="row">
@@ -19,10 +18,15 @@
             <thead>
                 <tr>
                     <th>
-                        Id
+                    <th>
+                            @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TrackTitleSortParm })
+                    </th>
                     </th>
                     <th>
-                        Title
+                        Artist
+                    </th>
+                    <th>
+                        Year
                     </th>
                     <th></th>
                 </tr>
@@ -32,14 +36,16 @@
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Id)
-                        </td>
-                        <td>
                             @Html.DisplayFor(modelItem => item.Title)
                         </td>
                         <td>
-                            @Html.ActionLink("Edit", "Edit", new { id= item.Id }) |
-                            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+                            @Html.DisplayFor(modelItem => item.Album.Artist)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Album.PublicationYear)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "EditTrack", new { id= item.Id }) |
                             @Html.ActionLink("Delete", "Delete", new { id=item.Id })
                         </td>
                     </tr>
@@ -75,7 +81,13 @@
     <script type="text/javascript">
         function PagerClick(index) {
             document.getElementById("pageNumber").value = index;
-            document.forms[0].submit();
+            document.forms[1].submit();
         }
     </script>
+}
+
+@section Styles
+    {
+    <style type="text/css">
+    </style>
 }

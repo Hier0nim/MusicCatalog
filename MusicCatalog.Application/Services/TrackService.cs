@@ -4,12 +4,6 @@ using MusicCatalog.Application.Interfaces;
 using MusicCatalog.Application.ViewModels.Track;
 using MusicCatalog.Domain.Interfaces;
 using MusicCatalog.Domain.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicCatalog.Application.Services
 {
@@ -21,12 +15,13 @@ namespace MusicCatalog.Application.Services
         public TrackService(ITrackRepository trackRepo, IMapper mapper)
         {
             _trackRepo = trackRepo;
-            _mapper = mapper; 
+            _mapper = mapper;
         }
 
-        public int AddTrack(NewTrackVm track)
+        public int AddTrack(NewTrackVm track, int albumId)
         {
             var tr = _mapper.Map<Track>(track);
+            tr.AlbumId = albumId;
             var id = _trackRepo.AddTrack(tr);
             return id;
         }
@@ -36,11 +31,20 @@ namespace MusicCatalog.Application.Services
             _trackRepo.DeleteTrack(id);
         }
 
-        public ListTrackForListVm GetAllTracksForList(int pageSize, int PageNumber, string searchString)
+        public ListTrackForListVm GetTracksWithSpecificAlbumIdForList(int pageSize, int PageNumber, string searchString, int albumId, string sortOrder)
         {
-            var tracks =  _trackRepo.GetAllTracks().Where(p => p.Title.StartsWith(searchString))
+            var tracks = _trackRepo.GetAllTracks().Where(p => p.Title.StartsWith(searchString)).Where(p => p.Album.Id == albumId)
                 .ProjectTo<TrackForListVm>(_mapper.ConfigurationProvider)
                 .ToList();
+            switch (sortOrder)
+            {
+                case "descending":
+                    tracks = tracks.OrderByDescending(o => o.Title).ToList();
+                    break;
+                case "ascending":
+                    tracks = tracks.OrderBy(o => o.Title).ToList();
+                    break;
+            }
             var tracksToShow = tracks.Skip(pageSize * (PageNumber - 1)).Take(pageSize).ToList();
             var trackList = new ListTrackForListVm()
             {
@@ -50,7 +54,6 @@ namespace MusicCatalog.Application.Services
                 Tracks = tracksToShow,
                 Count = tracks.Count
             };
-
             return trackList;
         }
 

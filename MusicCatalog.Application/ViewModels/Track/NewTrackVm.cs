@@ -1,13 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MusicCatalog.Application.Mapping;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicCatalog.Application.ViewModels.Track
 {
@@ -27,8 +20,8 @@ namespace MusicCatalog.Application.ViewModels.Track
     {
         public NewTrackValidation()
         {
-            RuleFor(x => x.Id).NotEmpty();
             RuleFor(x => x.Title).NotEmpty().MaximumLength(255);
+            RuleFor(x => x.Length).NotEmpty();
         }
     }
 }

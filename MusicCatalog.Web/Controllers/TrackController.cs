@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MusicCatalog.Application.Interfaces;
 using MusicCatalog.Application.ViewModels.Track;
-using MusicCatalog.Domain.Model;
+using System.Security.Claims;
 
 namespace MusicCatalog.Web.Controllers
 {
+    [Authorize(Roles = "Admin, User")]
     public class TrackController : Controller
     {
         private readonly ITrackService _trackService;
@@ -15,9 +17,20 @@ namespace MusicCatalog.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder)
         {
-            var model = _trackService.GetAllTracksForList(2, 1, "");
+            if (String.IsNullOrEmpty(sortOrder))
+            {
+                ViewBag.TrackTitleSortParm = String.IsNullOrEmpty(sortOrder) ? "descending" : "ascending";
+            }
+            else
+            {
+                ViewBag.TrackTitleSortParm = sortOrder == "ascending" ? "descending" : "ascending";
+            }
+            TempData["trackSortOrder"] = sortOrder;
+            int selectedAlbumID = TempData.ContainsKey("selectedAlbum") ? (int)TempData.Peek("selectedAlbum") : -1;
+            User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var model = _trackService.GetTracksWithSpecificAlbumIdForList(2, 1, "", selectedAlbumID, sortOrder);
             return View(model);
         }
 
@@ -28,11 +41,10 @@ namespace MusicCatalog.Web.Controllers
             {
                 pageNumber = 1;
             }
-            if (searchString is null)
-            {
-                searchString = String.Empty;
-            }
-            var model = _trackService.GetAllTracksForList(pageSize, pageNumber.Value, searchString);
+            searchString ??= String.Empty;
+            int selectedAlbumID = TempData.ContainsKey("selectedAlbum") ? (int)TempData.Peek("selectedAlbum") : -1;
+            string sortOrder = TempData.ContainsKey("trackSortOrder") ? (string)TempData.Peek("trackSortOrder") : "";
+            var model = _trackService.GetTracksWithSpecificAlbumIdForList(pageSize, pageNumber.Value, searchString, selectedAlbumID, sortOrder);
             return View(model);
         }
 
@@ -67,8 +79,12 @@ namespace MusicCatalog.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var id = _trackService.AddTrack(model);
-                return RedirectToAction("Index");
+                int selectedAlbumID = TempData.ContainsKey("selectedAlbum") ? (int)TempData.Peek("selectedAlbum") : -1;
+                if (selectedAlbumID != -1)
+                {
+                    _trackService.AddTrack(model, selectedAlbumID);
+                    return RedirectToAction("Index");
+                }
             }
             return View(model);
         }
@@ -78,7 +94,5 @@ namespace MusicCatalog.Web.Controllers
             _trackService.DeleteTrack(id);
             return RedirectToAction("Index");
         }
-
     }
-
 }

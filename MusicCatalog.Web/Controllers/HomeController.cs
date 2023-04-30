@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MusicCatalog.Web.Models;
 using System.Diagnostics;
 
 namespace MusicCatalog.Web.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -16,7 +18,7 @@ namespace MusicCatalog.Web.Controllers
         public IActionResult Index()
         {
             _logger.LogInformation("In Home/Index");
-            return View();
+            return RedirectToAction("Index", "Album");
         }
 
         public IActionResult Privacy()

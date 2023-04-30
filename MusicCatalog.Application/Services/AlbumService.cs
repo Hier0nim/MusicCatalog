@@ -4,11 +4,6 @@ using MusicCatalog.Application.Interfaces;
 using MusicCatalog.Application.ViewModels.Album;
 using MusicCatalog.Domain.Interfaces;
 using MusicCatalog.Domain.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicCatalog.Application.Services
 {
@@ -23,9 +18,10 @@ namespace MusicCatalog.Application.Services
             _mapper = mapper;
         }
 
-        public int AddAlbum(NewAlbumVm album)
+        public int AddAlbum(NewAlbumVm album, string userId)
         {
             var alb = _mapper.Map<Album>(album);
+            alb.OwnerId = userId;
             var id = _albumRepo.AddAlbum(alb);
             return id;
         }
@@ -35,17 +31,46 @@ namespace MusicCatalog.Application.Services
             _albumRepo.DeleteAlbum(id);
         }
 
-        public ListAlbumForListVm GetAllAlbumsForList(int pageSize, int PageNumber, string searchString)
+        public ListAlbumForListVm GetAlbumsFromUserForList(int pageSize, int PageNumber, string titleSearchString, string artistSearchString, int yearSearchNumber, string userId, string sortOrder)
         {
-            var albums = _albumRepo.GetAllAlbums().Where(p => p.Title.StartsWith(searchString))
-                .ProjectTo<AlbumForListVm>(_mapper.ConfigurationProvider)
-                .ToList();
+            List<AlbumForListVm> albums;
+            titleSearchString ??= "";
+            artistSearchString ??= "";
+            if (yearSearchNumber != 0)
+            {
+                albums = _albumRepo.GetAllAlbums().Where(p => p.Title.StartsWith(titleSearchString))
+                    .Where(p => p.Artist.StartsWith(artistSearchString))
+                    .Where(p => p.PublicationYear.Equals(yearSearchNumber))
+                    .Where(p => p.OwnerId == userId)
+                    .ProjectTo<AlbumForListVm>(_mapper.ConfigurationProvider)
+                    .ToList();
+            }
+            else
+            {
+                albums = _albumRepo.GetAllAlbums().Where(p => p.Title.StartsWith(titleSearchString))
+                    .Where(p => p.Artist.StartsWith(artistSearchString))
+                    .Where(p => p.OwnerId == userId)
+                    .ProjectTo<AlbumForListVm>(_mapper.ConfigurationProvider)
+                    .ToList();
+            }
+
+            albums = sortOrder switch
+            {
+                "title_desc" => albums.OrderByDescending(o => o.Title).ToList(),
+                "date" => albums.OrderBy(o => o.PublicationYear).ToList(),
+                "date_desc" => albums.OrderByDescending(o => o.PublicationYear).ToList(),
+                "artist" => albums.OrderBy(o => o.Artist).ToList(),
+                "artist_desc" => albums.OrderByDescending(o => o.Artist).ToList(),
+                _ => albums.OrderBy(o => o.Title).ToList(),
+            };
             var albumsToShow = albums.Skip(pageSize * (PageNumber - 1)).Take(pageSize).ToList();
             var albumList = new ListAlbumForListVm()
             {
                 PageSize = pageSize,
                 CurrentPage = PageNumber,
-                SearchString = searchString,
+                TitleSearchString = titleSearchString,
+                ArtistSearchString = artistSearchString,
+                YearSearchNumber = yearSearchNumber,
                 Albums = albumsToShow,
                 Count = albums.Count
             };
