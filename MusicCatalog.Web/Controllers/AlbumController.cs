@@ -27,7 +27,7 @@ namespace MusicCatalog.Web.Controllers
             ViewBag.ArtistSortParm = sortOrder == "artist" ? "artist_desc" : "artist";
             TempData["albumSortOrder"] = sortOrder;
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var model = _albumService.GetAlbumsFromUserForList(2, 1, "", "", 0, userId, sortOrder);
+            var model = _albumService.GetAlbumsFromUserForList(10, 1, "", "", 0, userId, sortOrder);
             return View(model);
         }
 

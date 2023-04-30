@@ -30,7 +30,7 @@ namespace MusicCatalog.Web.Controllers
             TempData["trackSortOrder"] = sortOrder;
             int selectedAlbumID = TempData.ContainsKey("selectedAlbum") ? (int)TempData.Peek("selectedAlbum") : -1;
             User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var model = _trackService.GetTracksWithSpecificAlbumIdForList(2, 1, "", selectedAlbumID, sortOrder);
+            var model = _trackService.GetTracksWithSpecificAlbumIdForList(10, 1, "", selectedAlbumID, sortOrder);
             return View(model);
         }
 
