@@ -5,92 +5,99 @@
 }
 
 <h1>Your Albums</h1>
-<div class="row">
-    <input type="button" class="btn btn-primary add-button" value="Create New Album" onclick="location.href='@Url.Action("AddAlbum", "Album")'"/>
-</div>
+
 <form asp-action="Index" asp-controller="Album" method="post">
-     <div class="row">
-        <div class="col-sm-4">
-            <input type="text" asp-for="TitleSearchString" name="titleSearchString" id="titleSearchString" />
-        </div>
-        <div class="col-sm-4">
-            <input type="text" asp-for="ArtistSearchString" name="artistSearchString" id="artistSearchString" />        
-        </div>
-        <div class="col-sm-4">
-            <input type="number" asp-for="YearSearchNumber" name="yearSearchNumber" id="yearSearchNumber" />
-            <input type="submit" value="search" />
+    <div class="container">
+        <div class="row">
+            <div class="col">Search Artist</div>
+            <div class="col">Search Title</div>
+            <div class="col"> Search Year </div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="w-100"></div>
+            <div class="col"><input type="text" asp-for="ArtistSearchString" name="artistSearchString" id="artistSearchString" /></div>
+            <div class="col"><input type="text" asp-for="TitleSearchString" name="titleSearchString" id="titleSearchString" /></div>
+            <div class="col"><input type="number" asp-for="YearSearchNumber" name="yearSearchNumber" id="yearSearchNumber" /></div>
+            <div class="col"><input type="submit" value="search" /></div>
+            <div class="col"><input type="button" value="Create New Album" onclick="location.href='@Url.Action("AddAlbum", "Album")'" /></div>
+            <div class="w-100"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>     
+            </div>
         </div>
     </div>
-    <div class="row">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TitleSortParm })
-                    </th>
-                    <th>
-                        @Html.ActionLink("Artist", "Index", new { sortOrder = ViewBag.ArtistSortParm })
-                    </th>
-                    <th>
-                        @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParm })
-                    </th>
-                    <th>
-                        Version
-                    </th>
-                    <th>
-                        Provider
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Albums) {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Title)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Artist)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.PublicationYear)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Version)
-                        </td>
-                        <td>
-                            @User.Identity.Name
-                        </td>
-                        <td>
-                            @Html.ActionLink("Edit", "EditAlbum", new { id=item.Id }) |
-                            @Html.ActionLink("Details", "Details", new { id=item.Id, albumTitle = item.Title, artist = item.Artist}) |
-                            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <div class="row">
-        <table>
-            <tr>
-                @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
-                {
-                    <td>
-                        @if (i != Model.CurrentPage)
-                        {
-                            <a href="javascript:PagerClick(@i)">@i</a>
-                        }
-                        else
-                        {
-                            <span>@i</span>
-                        }
-                    </td>
-                }
-            </tr>
-        </table>
-        <input type="hidden" name="pageNumber" id="pageNumber" />
-        <input type="hidden" name="pageSize" id="pageSize" value="2" />
+    <div class="container bootstrap snippets bootdey">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="main-box no-header clearfix">
+                    <div class="main-box-body clearfix">
+                        <div class="table-responsive">
+                            <table class="table user-list">
+                                <thead>
+                                    <tr>
+                                        <th><span>@Html.ActionLink("Artist", "Index" , new { sortOrder=ViewBag.ArtistSortParm })</span></th>
+                                        <th><span>@Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TitleSortParm })</span></th>
+                                        <th><span>@Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParm })</span></th>
+                                        <th><span>Version</span></th>
+                                        <th><span>Provider Email</span></th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Albums)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Artist)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Title)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.PublicationYear)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Version)
+                                            </td>
+                                            <td>
+                                                @User.Identity.Name
+                                            </td>
+                                            <td>
+                                                @Html.ActionLink("Edit", "EditAlbum", new { id=item.Id }) |
+                                                @Html.ActionLink("Details", "Details", new { id=item.Id, albumTitle = item.Title, artist = item.Artist}) |
+                                                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <ul class="pagination pull-right">
+                            <tr>
+                                @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+                                {
+                                    <td>
+                                        @if (i != Model.CurrentPage)
+                                        {
+                                    <li><a href="javascript:PagerClick(@i)">@i</a></li>
+                                        }
+                                        else
+                                        {
+                                    <li><a></a>@i<a /></li>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                         </u>
+                            <input type="hidden" name="pageNumber" id="pageNumber" />
+                            <input type="hidden" name="pageSize" id="pageSize" value="2" />
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </form>
 
@@ -108,17 +115,5 @@
 @section Styles
     {
     <style type="text/css">
-        .add-button{
-            background-color: #4CAF50;
-            border-radius: 2px;
-            width: 36;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            padding: 24px 36px;
-        }
     </style>
 }
