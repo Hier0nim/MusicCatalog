@@ -1,2 +1,2 @@
 # MusicCatalog
-Project created with ASP.NET MVC
+ASP.NET MVC application for managing user's music album collection.
