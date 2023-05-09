@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace MusicCatalog.Web.Controllers
 {
-    [Authorize(Roles = "Admin, User")]
+    //[Authorize(Roles = "Admin, User")]
     public class TrackController : Controller
     {
         private readonly ITrackService _trackService;
