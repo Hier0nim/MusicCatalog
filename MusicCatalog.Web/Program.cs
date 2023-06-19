@@ -3,24 +3,23 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using MusicCatalog.Application;
 using MusicCatalog.Application.ViewModels.Album;
 using MusicCatalog.Application.ViewModels.Track;
-using MusicCatalog.Domain.Interfaces;
 using MusicCatalog.Infrastructure;
-using MusicCatalog.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddFile("Logs/myLog-{Date}.txt");
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<Context>();
 
@@ -45,7 +44,6 @@ builder.Services.Configure<IdentityOptions>(options =>
 
     options.SignIn.RequireConfirmedEmail = false;
     options.User.RequireUniqueEmail = true;
-
 });
 
 builder.Services.AddAuthorization(options =>
@@ -79,8 +77,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    "default",
+    "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();

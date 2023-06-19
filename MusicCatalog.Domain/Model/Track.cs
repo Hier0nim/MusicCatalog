@@ -1,13 +1,10 @@
-﻿
-namespace MusicCatalog.Domain.Model
+﻿namespace MusicCatalog.Domain.Model;
+
+public class Track
 {
-    public class Track
-    {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public int Length { get; set; }
-        public int AlbumId { get; set; }
-        public virtual Album Album { get; set; }
-    }
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public int Length { get; set; }
+    public int AlbumId { get; set; }
+    public virtual Album Album { get; set; }
 }
- 

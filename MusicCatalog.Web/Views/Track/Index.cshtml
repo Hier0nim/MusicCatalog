@@ -15,11 +15,19 @@
             <div class="col"></div>
             <div class="col"></div>
             <div class="w-100"></div>
-            <div class="col"><input type="text" asp-for="SearchString" name="searchString" id="searchString" /></div>
-            <div class="col"><input type="submit" value="search" /></div>
+            <div class="col">
+                <input type="text" asp-for="SearchString" name="searchString" id="searchString"/>
+            </div>
+            <div class="col">
+                <input type="submit" value="search"/>
+            </div>
             <div class="col"></div>
-            <div class="col"> <input type="button" value="Create New Track" onclick="location.href='@Url.Action("AddTrack", "Track")'" /></div>
-            <div class="col"> <input type="button" value="Return to Albums" onclick="location.href='@Url.Action("Index", "Album")'" /></div>
+            <div class="col">
+                <input type="button" value="Create New Track" onclick="location.href='@Url.Action("AddTrack", "Track")'"/>
+            </div>
+            <div class="col">
+                <input type="button" value="Return to Albums" onclick="location.href='@Url.Action("Index", "Album")'"/>
+            </div>
             <div class="w-100"></div>
             <div class="col"></div>
             <div class="col"></div>
@@ -27,7 +35,6 @@
             <div class="col"></div>
             <div class="col"></div>
         </div>
-    </div>
     </div>
     <div class="container bootstrap snippets bootdey">
         <div class="row">
@@ -37,62 +44,76 @@
                         <div class="table-responsive">
                             <table class="table user-list">
                                 <thead>
-                                    <tr>
-                                        <th><span>@Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TrackTitleSortParm })</span></th>
-                                        <th><span>Artist</span></th>
-                                        <th><span>Year</span></th>
-                                        <th><span>Lenght</span></th>
-                                        <th><span>Provider Email</span></th>
-                                        <th>&nbsp;</th>
-                                    </tr>
+                                <tr>
+                                    <th>
+                                        <span>@Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TrackTitleSortParm })</span>
+                                    </th>
+                                    <th>
+                                        <span>Artist</span>
+                                    </th>
+                                    <th>
+                                        <span>Year</span>
+                                    </th>
+                                    <th>
+                                        <span>Lenght</span>
+                                    </th>
+                                    <th>
+                                        <span>Provider Email</span>
+                                    </th>
+                                    <th>&nbsp;</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in Model.Tracks)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Title)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Album.Artist)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Album.PublicationYear)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Length)
-                                            </td>
-                                            <td>
-                                                @User.Identity.Name
-                                            </td>
-                                            <td>
-                                                @Html.ActionLink("Edit", "EditTrack", new { id=item.Id }) |
-                                                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-                                            </td>
-                                        </tr>
-                                    }
+                                @foreach (var item in Model.Tracks)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Title)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Album.Artist)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Album.PublicationYear)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Length)
+                                        </td>
+                                        <td>
+                                            @User.Identity.Name
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Edit", "EditTrack", new { id = item.Id }) |
+                                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                                        </td>
+                                    </tr>
+                                }
                                 </tbody>
                             </table>
                         </div>
-                        <ul class="pagination pull-right">
+                        <u class="pagination pull-right">
                             <tr>
-                                @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+                                @for (var i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
                                 {
                                     <td>
                                         @if (i != Model.CurrentPage)
                                         {
-                                    <li><a href="javascript:PagerClick(@i)">@i</a></li>
+                                            <li>
+                                                <a href="javascript:PagerClick(@i)">@i</a>
+                                            </li>
                                         }
                                         else
                                         {
-                                    <li><a></a>@i<a /></li>
+                                            <li>
+                                                <a></a>@i<a/>
+                                            </li>
                                         }
-                                </td>
+                                    </td>
                                 }
                             </tr>
-                            </u>
-                            <input type="hidden" name="pageNumber" id="pageNumber" />
-                            <input type="hidden" name="pageSize" id="pageSize" value="10" />
+                        </u>
+                        <input type="hidden" name="pageNumber" id="pageNumber"/>
+                        <input type="hidden" name="pageSize" id="pageSize" value="10"/>
                     </div>
                 </div>
             </div>
@@ -101,7 +122,7 @@
 </form>
 
 @section Scripts
-    {
+{
     <script type="text/javascript">
         function PagerClick(index) {
             document.getElementById("pageNumber").value = index;
@@ -111,7 +132,7 @@
 }
 
 @section Styles
-    {
+{
     <style type="text/css">
     </style>
 }
