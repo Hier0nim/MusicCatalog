@@ -5,7 +5,6 @@ To do:
 - WebApi
 - Admin panel with role management
 - some styling
-- unit tests
 
 # Configuration
 - Clone or Download the Project
