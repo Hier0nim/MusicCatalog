@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
-using FakeItEasy;
-using FluentAssertions;
+using Moq;
+using MusicCatalog.Application.Mapping;
 using MusicCatalog.Application.Services;
 using MusicCatalog.Application.ViewModels.Track;
 using MusicCatalog.Domain.Interfaces;
+using MusicCatalog.Domain.Model;
 using Xunit;
 
 namespace MusicCatalog.Test.Track;
@@ -11,58 +12,174 @@ namespace MusicCatalog.Test.Track;
 public class TrackServiceTests
 {
     private readonly IMapper _mapper;
-    private readonly ITrackRepository _trackRepo;
-    private readonly TrackService _trackService;
+    private readonly Mock<ITrackRepository> _trackRepositoryMock;
 
     public TrackServiceTests()
     {
-        //Dependencies
-        _mapper = A.Fake<IMapper>();
-        _trackRepo = A.Fake<ITrackRepository>();
-        //SUT
-        _trackService = new TrackService(_trackRepo, _mapper);
+        _trackRepositoryMock = new Mock<ITrackRepository>();
+        var mockMapper = new MapperConfiguration(cfg => { cfg.AddProfile(new MappingProfile()); });
+        _mapper = mockMapper.CreateMapper();
     }
 
     [Fact]
-    public void TrackService_AddTrack_ReturnsInt()
+    public void AddTrack_ShouldReturnId()
     {
-        //Arrange
-        var NewTrackVm = new NewTrackVm();
-        var track = new Domain.Model.Track();
-        A.CallTo(() => _trackRepo.AddTrack(track)).Returns(0);
-        //Act
-        var result = _trackService.AddTrack(NewTrackVm, 0);
-        //Assert
-        result.Should().Be(0);
+        // Arrange
+        var trackService = new TrackService(_trackRepositoryMock.Object, _mapper);
+        var track = new NewTrackVm
+        {
+            Id = 1,
+            Title = "test"
+        };
+        _trackRepositoryMock.Setup(x => x.AddTrack(It.IsAny<Domain.Model.Track>())).Returns(1);
+
+        // Act
+        var result = trackService.AddTrack(track, 1);
+
+        // Assert
+        Assert.Equal(track.Id, result);
     }
 
     [Fact]
-    public void TrackService_GetTracksWithSpecificAlbumIdForList_ReturnsObject()
+    public void DeleteTrack_ShouldCallDeleteTrackMethodOnce()
     {
-        //Arrange
+        // Arrange
+        var trackService = new TrackService(_trackRepositoryMock.Object, _mapper);
 
-        //Act
+        // Act
+        trackService.DeleteTrack(1);
 
-        //Assert
+        // Assert
+        _trackRepositoryMock.Verify(x => x.DeleteTrack(It.IsAny<int>()), Times.Once);
     }
 
     [Fact]
-    public void TrackService_GetTrackForEdit_ReturnsObject()
+    public void GetTracksWithSpecificAlbumIdForList_ShouldReturnListOftracks()
     {
-        //Arrange
+        // Arrange
+        var trackService = new TrackService(_trackRepositoryMock.Object, _mapper);
+        var tracks = new List<Domain.Model.Track>
+        {
+            new()
+            {
+                Id = 1,
+                Title = "test",
+                Album = new Album { Id = 1 },
+                AlbumId = 1,
+                Length = 1
+            },
+            new()
+            {
+                Id = 2,
+                Title = "test2",
+                Album = new Album { Id = 1 },
+                AlbumId = 1,
+                Length = 1
+            }
+        };
+        var queryableTracks = tracks.AsQueryable();
+        _trackRepositoryMock.Setup(x => x.GetAllTracks()).Returns(queryableTracks);
 
-        //Act
+        // Act
+        var result = trackService.GetTracksWithSpecificAlbumIdForList(2, 1, "", 1, "ascending");
 
-        //Assert
+        // Assert
+        Assert.Equal(2, result.Count);
+    }
+
+    [Theory]
+    [InlineData(2, 1, "test", 1, "ascending")]
+    [InlineData(1, 1, "test", 2, "ascending")]
+    [InlineData(1, 2, "test2", 1, "ascending")]
+    [InlineData(0, 2, "test3", 1, "ascending")]
+    public void GetTracksWithSpecificAlbumIdForList_ShouldReturnCorrectNumberOfTracks(int expected, int pageSize,
+        string searchString, int albumId, string sortOrder)
+    {
+        // Arrange
+        var trackService = new TrackService(_trackRepositoryMock.Object, _mapper);
+        var tracks = new List<Domain.Model.Track>
+        {
+            new()
+            {
+                Id = 1,
+                Title = "test",
+                Album = new Album { Id = 1 },
+                AlbumId = 1,
+                Length = 1
+            },
+            new()
+            {
+                Id = 2,
+                Title = "test2",
+                Album = new Album { Id = 1 },
+                AlbumId = 1,
+                Length = 1
+            },
+            new()
+            {
+                Id = 2,
+                Title = "test2",
+                Album = new Album { Id = 2 },
+                AlbumId = 2,
+                Length = 1
+            }
+        };
+        var queryableTracks = tracks.AsQueryable();
+        _trackRepositoryMock.Setup(x => x.GetAllTracks()).Returns(queryableTracks);
+
+        // Act
+        var result = trackService.GetTracksWithSpecificAlbumIdForList(pageSize, 1, searchString, albumId, sortOrder);
+
+        // Assert
+        Assert.Equal(expected, result.Count);
     }
 
     [Fact]
-    public void TrackService_UpdateTrack_ReturnsObject()
+    public void GetTrackForEdit_ShouldReturnTrack()
     {
-        //Arrange
+        // Arrange
+        var trackService = new TrackService(_trackRepositoryMock.Object, _mapper);
+        var track = new Domain.Model.Track
+        {
+            Id = 1,
+            Title = "test",
+            Album = new Album { Id = 1 },
+            AlbumId = 1,
+            Length = 1
+        };
+        _trackRepositoryMock.Setup(x => x.GetTrackById(It.IsAny<int>())).Returns(track);
 
-        //Act
+        // Act
+        var result = trackService.GetTrackForEdit(1);
 
-        //Assert
+        // Assert
+        Assert.Equal(track.Id, result.Id);
+    }
+
+    [Fact]
+    public void UpdateTrack_ShouldReturnTrack()
+    {
+        // Arrange
+        var trackService = new TrackService(_trackRepositoryMock.Object, _mapper);
+        var track = new NewTrackVm
+        {
+            Id = 1,
+            Title = "test"
+        };
+        var trackDomain = new Domain.Model.Track
+        {
+            Id = 1,
+            Title = "test",
+            Album = new Album { Id = 1 },
+            AlbumId = 1,
+            Length = 1
+        };
+        _trackRepositoryMock.Setup(x => x.GetTrackById(It.IsAny<int>())).Returns(trackDomain);
+
+        // Act
+        var result = trackService.UpdateTrack(track);
+
+        // Assert
+        Assert.Equal(track.Id, result.Id);
     }
 }

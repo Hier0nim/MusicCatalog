@@ -60,14 +60,14 @@ public class TrackService : ITrackService
         return trackList;
     }
 
-    public object GetTrackForEdit(int id)
+    public NewTrackVm GetTrackForEdit(int id)
     {
         var track = _trackRepo.GetTrackById(id);
         var trackVm = _mapper.Map<NewTrackVm>(track);
         return trackVm;
     }
 
-    public object UpdateTrack(NewTrackVm model)
+    public NewTrackVm UpdateTrack(NewTrackVm model)
     {
         var track = _mapper.Map<Track>(model);
         _trackRepo.UpdateTrack(track);

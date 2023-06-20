@@ -7,7 +7,7 @@ using MusicCatalog.Domain.Model;
 
 namespace MusicCatalog.Application.Services;
 
-internal class AlbumService : IAlbumService
+public class AlbumService : IAlbumService
 {
     private readonly IAlbumRepository _albumRepo;
     private readonly IMapper _mapper;
@@ -75,7 +75,7 @@ internal class AlbumService : IAlbumService
         return albumList;
     }
 
-    public object GetAlbumForEdit(int id)
+    public NewAlbumVm GetAlbumForEdit(int id)
     {
         var album = _albumRepo.GetAlbumById(id);
         var albumVm = _mapper.Map<NewAlbumVm>(album);
@@ -83,7 +83,7 @@ internal class AlbumService : IAlbumService
     }
 
 
-    public object UpdateAlbum(NewAlbumVm model)
+    public NewAlbumVm UpdateAlbum(NewAlbumVm model)
     {
         var album = _mapper.Map<Album>(model);
         _albumRepo.UpdateAlbum(album);

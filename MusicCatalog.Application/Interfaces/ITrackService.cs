@@ -8,7 +8,7 @@ public interface ITrackService
         int albumId, string sortOrder);
 
     int AddTrack(NewTrackVm track, int albumId);
-    object GetTrackForEdit(int id);
-    object UpdateTrack(NewTrackVm model);
+    NewTrackVm GetTrackForEdit(int id);
+    NewTrackVm UpdateTrack(NewTrackVm model);
     void DeleteTrack(int id);
 }

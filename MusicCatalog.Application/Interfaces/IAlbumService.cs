@@ -8,7 +8,7 @@ public interface IAlbumService
         string artistSearchString, int yearSearchNumber, string userId, string sortOrder);
 
     int AddAlbum(NewAlbumVm album, string userId);
-    object GetAlbumForEdit(int id);
-    object UpdateAlbum(NewAlbumVm model);
+    NewAlbumVm GetAlbumForEdit(int id);
+    NewAlbumVm UpdateAlbum(NewAlbumVm model);
     void DeleteAlbum(int id);
 }
